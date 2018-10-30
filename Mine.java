@@ -92,51 +92,31 @@ class Miner {
     public static String leftPad(String str, int n) {
         return String.format("%1$" + n + "s", str).replace(' ', '0');
     }
-
-    /**
-     * Given a start time and end time in nanoseconds (courtesy of System.nanoTime),
-     * and a number of hashes complete in this time, print out the number of hashes
-     * per second.
-     * @param numHashes - number of hashes completed
-     * @param startTime - time hashing started
-     * @param endTime - time hashing ended
-     */
-    public static void printHashRate(BigInteger numHashes, long startTime, long endTime){
-        long timeDiff = endTime - startTime;
-        long seconds = timeDiff / 1000000000;
-        BigInteger time = new BigInteger ((Long.valueOf(seconds)).toString());
-        //BigInteger hashesPerSecond = numHashes.divide(time);
-        System.out.println("Time: " + time);
-    }
 }
 
 class Transaction {
 	// the entire transaction string from file
 	String entireTransaction;
 
-	// initializing # of inputs/outputs
+	// initializing # of transactions & payout 
 	int numTransactions;
-
-	// initializing miner's payout
 	int minerPayout;
 
 	// processing transaction file's information
-	public Transaction(String line){
+	public Transaction(String transactionFile){
 
 		// save list of all transactions
-		entireTransaction = line;
+		entireTransaction = transactionFile;
 
-		// swtich for available fees
+		// swtich for available fees & input
 		boolean ioAvailable = false; 
-
-		// switch for inputs
 		boolean input = true;
 
 		// temporary string to store the remaining transactions
 		String tempAvailable = "";
 
 		// converting to character array for easier string manipulation
-		char[] temp = line.toCharArray();
+		char[] temp = transactionFile.toCharArray();
 
 		for (int i = 0; i < temp.length; i++) {
 
@@ -186,7 +166,10 @@ class Transaction {
 
 public class Mine {
 
+	// Counter for # of transactions
 	public static int transactionCount = 0;
+
+	// This is the maximum target block size
 	public static final BigInteger MAX_TARGET = new BigInteger("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF", 16);
 
 	public static LinkedList<Transaction> initializeTransactions(String file) throws Exception{
@@ -196,9 +179,7 @@ public class Mine {
 
 		// iterator for transaction list
 		String currentLine;
-
 		int count = 0;
-
 		Scanner scanny = new Scanner(new File(file));
 
 		// read in the file
@@ -221,7 +202,6 @@ public class Mine {
 	public static LinkedList<Transaction> sortedTransactions(LinkedList<Transaction> total){
 
 		LinkedList<Transaction> sortedTransactions = new LinkedList<>();
-
 		int count = 0;
 		int inputOutputs = 0;
 
@@ -235,7 +215,6 @@ public class Mine {
 			}
 		}
 		transactionCount = inputOutputs;
-
 		return sortedTransactions;
 	}
 
